@@ -47,6 +47,7 @@
 \newcommand{\segurl}[1]{\underline{\vphantom{Ag}#1}\hspace{0pt}}
 \newcommand{\urlPlatformInfo}{\href{https://github.com/FNakano/IAA-Apostila/tree/main/getPlatformInfo}{\ttfamily\color{linkblue}\segurl{https://github.com/}\allowbreak\segurl{FNakano/}\allowbreak\segurl{IAA-Apostila/}\allowbreak\segurl{tree/}\allowbreak\segurl{main/}\allowbreak\segurl{getPlatformInfo}}}
 \newcommand{\urlRepoEP}{\href{https://github.com/FNakano/IAA-Apostila/tree/main/EP2}{\ttfamily\color{linkblue}\segurl{https://github.com/}\allowbreak\segurl{FNakano/}\allowbreak\segurl{IAA-Apostila/}\allowbreak\segurl{tree/}\allowbreak\segurl{main/}\allowbreak\segurl{EP2}}}
+\newcommand{\urlRepoOficial}{\href{https://github.com/igorfcfs/IAA-EP2-ComparacaoAlgoritmos}{\ttfamily\color{linkblue}\segurl{https://github.com/}\allowbreak\segurl{igorfcfs/}\allowbreak\segurl{IAA-EP2-ComparacaoAlgoritmos}}}
 
 % Títulos de seção: tipografia preta tradicional, com um fio fino em
 % tom azul discreto como único toque de cor -- hierarquia visual sem
@@ -790,13 +791,59 @@ qualidade estatística do LCG é irrelevante.
 
 \subsection{Questão 3 --- Código-fonte}
 
-Entregue em \texttt{src/}: \texttt{rng.c\barra{}h},
-\texttt{utilarray.c\barra{}h}, \texttt{elapsedRunningTime.c\barra{}h}
-(fornecidos pelo professor, sem alterações); \texttt{quicksort.c\barra{}h},
-\texttt{radixsort.c\barra{}h} (implementação própria, Seção~2);
-\texttt{gen\_input.c}, \texttt{run\_sort.c}, \texttt{benchmark\_clock.c},
-\texttt{secretkey\_gen.c} (programas de suporte, próprios). Compilação
-na Seção~3.2.
+\textbf{Repositório oficial do projeto:} \urlRepoOficial{} --- todo o
+código-fonte, scripts de benchmark, dados brutos e este próprio relatório
+estão disponíveis lá para análise detalhada pelo professor, caso deseje.
+
+Em anexo a esta questão: \texttt{testSort.c}, reunindo em um único
+arquivo as duas implementações próprias de ordenação pedidas no EP2
+(quicksort e radix sort), no mesmo padrão de uso de
+\texttt{start()\barra{}stop()\barra{}printCSVElapsed()} do
+\texttt{testSort.c} de exemplo fornecido pelo professor. As
+implementações são idênticas às de \texttt{quicksort.c} e
+\texttt{radixsort.c} do repositório (Seção~2), apenas consolidadas num
+só arquivo para facilitar a leitura.
+
+\textbf{Compilação} (os três arquivos abaixo são os fornecidos pelo
+professor, sem nenhuma alteração):
+\begin{verbatim}
+gcc -O2 rng.c utilarray.c elapsedRunningTime.c testSort.c -o testSort
+\end{verbatim}
+
+\textbf{Execução:} \texttt{./testSort [n]} --- \texttt{n} é opcional
+(padrão 1\,000\,000). O programa gera um único array aleatório de
+tamanho $n$, faz uma cópia idêntica dele (mesmo controle experimental da
+Seção~2.4: os dois algoritmos ordenam exatamente a mesma entrada), ordena
+uma cópia com quicksort e a outra com radix sort, mede o tempo de cada
+ordenação com \texttt{clock()} e \texttt{gettimeofday()} e confere se
+cada resultado ficou corretamente ordenado, imprimindo uma linha CSV por
+algoritmo (\texttt{algoritmo;n;tempo\_clock\_s;tempo\_wall\_s;ordenado}).
+Testado neste exato formato para $n=10^3$, $5\times10^6$ e o padrão
+$10^6$, com \texttt{ordenado=1} em todos os casos.
+
+\textbf{Como cada coluna das tabelas de resultados foi gerada} (dois
+mecanismos distintos, não um só): para a tabela de tempo médio com
+repetições (Seção~\ref{sec:resultados}, $n$ de 1.000 a 200.000.000), o
+\texttt{main()} de \texttt{run\_sort.c} \textbf{não} foi ajustado para
+rodar tudo internamente --- cada execução roda um único teste (um
+algoritmo, um tamanho, uma repetição) e imprime uma linha CSV; um script
+externo (\texttt{bench.ps1}) orquestra o laço sobre tamanhos, repetições
+e algoritmo, chamando \texttt{gen\_input.exe} (mesma entrada para os dois
+algoritmos) e depois \texttt{run\_sort.exe} a cada iteração. Já a tabela
+oficial da planilha (Seção~\ref{sec:planilha-oficial}, 14 tamanhos até
+$T(10^{10})$, 1 execução cada) foi gerada por \texttt{benchmark\_clock.c},
+que tem um laço \textbf{interno} no próprio \texttt{main()}, percorrendo
+os 14 tamanhos em sequência numa única execução do programa.
+
+O restante do código-fonte completo (não apenas os algoritmos de
+ordenação) está em \texttt{src/} no repositório acima:
+\texttt{rng.c\barra{}h}, \texttt{utilarray.c\barra{}h},
+\texttt{elapsedRunningTime.c\barra{}h} (fornecidos pelo professor, sem
+alterações); \texttt{quicksort.c\barra{}h}, \texttt{radixsort.c\barra{}h}
+(implementação própria, Seção~2); \texttt{gen\_input.c},
+\texttt{run\_sort.c}, \texttt{benchmark\_clock.c},
+\texttt{secretkey\_gen.c} (programas de suporte, próprios). Compilação de
+cada um na Seção~3.2.
 
 \subsection{Questão 4 --- Preenchimento da planilha}
 
