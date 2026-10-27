@@ -1,0 +1,29 @@
+"label","n","algoritmo","tempo_s","testado"
+"T(1E6)",1e+06,"Quicksort",0.057,TRUE
+"T(2E6)",2e+06,"Quicksort",0.111,TRUE
+"T(5E6)",5e+06,"Quicksort",0.334,TRUE
+"T(1E7)",1e+07,"Quicksort",0.618,TRUE
+"T(2E7)",2e+07,"Quicksort",1.286,TRUE
+"T(5E7)",5e+07,"Quicksort",3.415,TRUE
+"T(1E8)",1e+08,"Quicksort",7.141,TRUE
+"T(2E8)",2e+08,"Quicksort",16.154,TRUE
+"T(5E8)",5e+08,"Quicksort",38.099,TRUE
+"T(1E9)",1e+09,"Quicksort",81.306,TRUE
+"T(2E9)",2e+09,"Quicksort",222.18,TRUE
+"T(6E9)",6e+09,"Quicksort",NA,FALSE
+"T(8E9)",8e+09,"Quicksort",NA,FALSE
+"T(10E9)",1e+10,"Quicksort",NA,FALSE
+"T(1E6)",1e+06,"Radix Sort",0.007,TRUE
+"T(2E6)",2e+06,"Radix Sort",0.015,TRUE
+"T(5E6)",5e+06,"Radix Sort",0.038,TRUE
+"T(1E7)",1e+07,"Radix Sort",0.079,TRUE
+"T(2E7)",2e+07,"Radix Sort",0.156,TRUE
+"T(5E7)",5e+07,"Radix Sort",0.414,TRUE
+"T(1E8)",1e+08,"Radix Sort",0.849,TRUE
+"T(2E8)",2e+08,"Radix Sort",1.518,TRUE
+"T(5E8)",5e+08,"Radix Sort",4.012,TRUE
+"T(1E9)",1e+09,"Radix Sort",12.322,TRUE
+"T(2E9)",2e+09,"Radix Sort",503.456,TRUE
+"T(6E9)",6e+09,"Radix Sort",NA,FALSE
+"T(8E9)",8e+09,"Radix Sort",NA,FALSE
+"T(10E9)",1e+10,"Radix Sort",NA,FALSE

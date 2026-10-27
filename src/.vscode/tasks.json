@@ -1,0 +1,121 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "Build gen_input",
+      "command": "gcc",
+      "args": [
+        "-Wall",
+        "-Wextra",
+        "-O2",
+        "-g3",
+        "-finput-charset=UTF-8",
+        "-fexec-charset=UTF-8",
+        "rng.c",
+        "utilarray.c",
+        "gen_input.c",
+        "-o",
+        "${workspaceFolder}/output/gen_input.exe"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$gcc"],
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "label": "Build run_sort",
+      "command": "gcc",
+      "args": [
+        "-Wall",
+        "-Wextra",
+        "-O2",
+        "-g3",
+        "-finput-charset=UTF-8",
+        "-fexec-charset=UTF-8",
+        "rng.c",
+        "utilarray.c",
+        "elapsedRunningTime.c",
+        "quicksort.c",
+        "radixsort.c",
+        "run_sort.c",
+        "-o",
+        "${workspaceFolder}/output/run_sort.exe"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$gcc"],
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "label": "Build secretkey_gen",
+      "command": "gcc",
+      "args": [
+        "-Wall",
+        "-Wextra",
+        "-O2",
+        "-g3",
+        "-finput-charset=UTF-8",
+        "-fexec-charset=UTF-8",
+        "rng.c",
+        "secretkey_gen.c",
+        "-o",
+        "${workspaceFolder}/output/secretkey_gen.exe"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$gcc"],
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "label": "Build All",
+      "dependsOn": [
+        "Build gen_input",
+        "Build run_sort",
+        "Build secretkey_gen"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "Executar Benchmark Rápido (até 1M elementos)",
+      "command": "powershell",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/bench.ps1",
+        "-Quick"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "label": "Executar Benchmark Completo (todos os tamanhos)",
+      "command": "powershell",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/bench.ps1"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

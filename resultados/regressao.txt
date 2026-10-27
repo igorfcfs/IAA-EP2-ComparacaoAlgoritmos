@@ -1,0 +1,64 @@
+=== Regressao log(tempo_parede) ~ log(n), por algoritmo ===
+
+--- Quicksort ---
+
+Call:
+lm(formula = log(media_s) ~ log(n), data = d)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.047353 -0.034401 -0.014204  0.008211  0.084101 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -17.481872   0.061029  -286.4   <2e-16 ***
+log(n)        1.055537   0.004167   253.3   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.05038 on 8 degrees of freedom
+Multiple R-squared:  0.9999,	Adjusted R-squared:  0.9999 
+F-statistic: 6.416e+04 on 1 and 8 DF,  p-value: < 2.2e-16
+
+
+Expoente empirico k (tempo ~ n^k): 1.0555 (IC95%: 1.0459 a 1.0651)
+R^2 ajustado: 0.99986
+
+--- Radix Sort ---
+
+Call:
+lm(formula = log(media_s) ~ log(n), data = d)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.12743 -0.07933 -0.02515  0.09011  0.16660 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -19.017833   0.132613  -143.4 6.25e-15 ***
+log(n)        1.022670   0.009055   112.9 4.22e-14 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.1095 on 8 degrees of freedom
+Multiple R-squared:  0.9994,	Adjusted R-squared:  0.9993 
+F-statistic: 1.276e+04 on 1 and 8 DF,  p-value: 4.222e-14
+
+
+Expoente empirico k (tempo ~ n^k): 1.0227 (IC95%: 1.0018 a 1.0436)
+R^2 ajustado: 0.99929
+
+
+=== Teste pareado (Wilcoxon signed-rank, por n, tempo quicksort vs radix) ===
+Cada repeticao usa a MESMA entrada para os dois algoritmos (par natural).
+
+
+	Wilcoxon signed rank test with continuity correction
+
+data:  pares$tempo_wall_s_qs and pares$tempo_wall_s_radix
+V = 2346, p-value = 7.809e-13
+alternative hypothesis: true location shift is not equal to 0
+
+
+n de pares comparados: 68
+Quicksort foi mais lento que radix sort em 68 de 68 pares (100.0%).

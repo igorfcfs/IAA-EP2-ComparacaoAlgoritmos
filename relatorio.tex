@@ -1,0 +1,842 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage{textcomp}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage[table]{xcolor}
+\usepackage{listings}
+\usepackage{titlesec}
+
+% --- Paleta de cores do documento (uso discreto e pontual) -----------
+\definecolor{accentblue}{RGB}{70,130,180}  % azul discreto, usado apenas em um fio sob \section e em links externos
+\definecolor{linkblue}{RGB}{60,110,170}    % azul claro, reservado a links/URLs reais (não à navegação interna)
+\definecolor{tablehead}{RGB}{242,246,250}  % cinza-azulado muito claro, fundo de cabeçalho de tabela
+
+% Links de navegação interna (sumário, referências cruzadas, citações)
+% permanecem pretos, como em um relatório impresso; apenas URLs/arquivos
+% externos usam o azul claro, conforme solicitado.
+\usepackage[
+	colorlinks=true,
+	linkcolor=black,
+	citecolor=black,
+	urlcolor=linkblue,
+	filecolor=linkblue,
+	linktoc=all
+]{hyperref}
+\usepackage{url}
+% URLs: além da cor azul, ganham sublinhado. Cada segmento entre "/" é
+% sublinhado individualmente com \underline e separado por um ponto de
+% quebra (\allowbreak), de modo que o sublinhado sobrevive à quebra de
+% linha sem depender de pacotes externos frágeis (soul/ulem mostraram
+% corromper o texto quando combinados com \href nesta instalação).
+% \vphantom{Ag} força a mesma altura/profundidade de referência em
+% todo segmento (independente de ter ou não descendentes como "g"),
+% o que mantém o sublinhado na mesma altura em toda a extensão --
+% sem isso, cada segmento desenha a linha em uma altura ligeiramente
+% diferente, dando a impressão de um traço quebrado/desalinhado.
+\newcommand{\segurl}[1]{\underline{\vphantom{Ag}#1}\hspace{0pt}}
+\newcommand{\urlPlatformInfo}{\href{https://github.com/FNakano/IAA-Apostila/tree/main/getPlatformInfo}{\ttfamily\color{linkblue}\segurl{https://github.com/}\allowbreak\segurl{FNakano/}\allowbreak\segurl{IAA-Apostila/}\allowbreak\segurl{tree/}\allowbreak\segurl{main/}\allowbreak\segurl{getPlatformInfo}}}
+\newcommand{\urlRepoEP}{\href{https://github.com/FNakano/IAA-Apostila/tree/main/EP2}{\ttfamily\color{linkblue}\segurl{https://github.com/}\allowbreak\segurl{FNakano/}\allowbreak\segurl{IAA-Apostila/}\allowbreak\segurl{tree/}\allowbreak\segurl{main/}\allowbreak\segurl{EP2}}}
+
+% Títulos de seção: tipografia preta tradicional, com um fio fino em
+% tom azul discreto como único toque de cor -- hierarquia visual sem
+% "pintar" o texto do título.
+\titleformat{\section}
+	{\normalfont\Large\bfseries}{\thesection}{0.8em}{}
+	[{\color{accentblue}\titlerule[0.6pt]}]
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\bfseries\itshape}{\thesubsubsection}{0.8em}{}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue!60!black}\bfseries,
+  commentstyle=\color{green!40!black}\itshape,
+  stringstyle=\color{red!60!black},
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+           {ã}{{\~a}}1 {õ}{{\~o}}1 {ç}{{\c c}}1 {â}{{\^a}}1 {ê}{{\^e}}1 {ô}{{\^o}}1 {à}{{\`a}}1
+           {Á}{{\'A}}1 {É}{{\'E}}1 {Ç}{{\c C}}1 {Ã}{{\~A}}1
+}
+
+% Quebra de linha em nomes de arquivo: permite quebrar depois de "_" (e, no
+% texto, depois de "/" via \barra) dentro de \texttt, sem inserir hífen, e dá
+% folga extra ao espaçamento para evitar linhas que ultrapassem a margem.
+\newcommand{\barra}{/\allowbreak}
+\let\underscoreoriginal\_
+\renewcommand{\_}{\underscoreoriginal\allowbreak}
+\setlength{\emergencystretch}{3em}
+
+\newtheorem*{teorema}{Teorema}
+
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+
+% Inclui a figura apenas se o arquivo existir
+% #1 = arquivo, #2 = legenda, #3 = rótulo, #4 = fonte (só na legenda)
+\newcommand{\figuraopcional}[4]{%
+  \IfFileExists{#1}{%
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.82\textwidth]{#1}
+      \caption[#2]{#2 #4}
+      \label{#3}
+    \end{figure}%
+  }{%
+    \begin{center}\fbox{\parbox{0.8\textwidth}{\centering\small
+      Figura pendente: \texttt{\detokenize{#1}}\\ (#2)}}\end{center}%
+  }%
+}
+
+\begin{document}
+
+% ======================================================================
+% CAPA
+% ======================================================================
+\begin{titlepage}
+	\centering
+	\vspace*{1.5cm}
+	{\large UNIVERSIDADE DE SÃO PAULO\par}
+	{\large ESCOLA DE ARTES, CIÊNCIAS E HUMANIDADES\par}
+	\vspace{0.2cm}
+	{\normalsize Bacharelado em Sistemas de Informação\par}
+
+	\vfill
+
+	{\Huge\bfseries Comparação de Algoritmos de Ordenação\par}
+	\vspace{0.35cm}
+	\textcolor{accentblue}{\rule{0.4\linewidth}{0.6pt}}
+	\vspace{0.35cm}
+	{\Large\itshape Quicksort vs.\ Radix Sort\par}
+	\vspace{0.6cm}
+	{\large EP2 --- Introdução à Análise de Algoritmos\par}
+
+	\vfill
+
+	{\large\bfseries Igor Fernando Casita Ferreira da Silva\par}
+	{\normalsize RA 18245598\par}
+
+	\vspace{1.2cm}
+
+	{\normalsize Docente responsável: Prof.\ Dr.\ Fabio Nakano\par}
+
+	\vfill
+
+	{\normalsize São Paulo\par}
+	{\normalsize Outubro de 2026\par}
+	\vspace*{1cm}
+\end{titlepage}
+
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
+
+%======================================================================
+\setcounter{section}{-1}
+\section{Contexto, Definições e Objetivo}
+%======================================================================
+
+\subsection{Contexto}
+
+Este Relatório documenta o EP2 (Exercício-Programa~2) da disciplina de
+Introdução à Análise de Algoritmos (IAA), cujo enunciado pede a
+implementação e comparação empírica de dois algoritmos de ordenação,
+justificando os resultados observados com base na teoria de análise de
+algoritmos estudada na disciplina.
+
+\subsection{Definições}
+
+\begin{description}
+  \item[Trabalho:] o conjunto completo de arquivos entregues para este
+    EP2: o Relatório, os programas-fonte, os resultados brutos e
+    agregados, os gráficos e os scripts de análise estatística.
+  \item[Relatório:] o presente documento (\texttt{relatorio.pdf}, gerado
+    a partir de \texttt{relatorio.tex}).
+  \item[Autor:] Igor Fernando Casita Ferreira da Silva, RA~18245598 ---
+    EP2 é trabalho individual.
+  \item[Professor:] Prof.\ Dr.\ Fábio Nakano, docente da disciplina de
+    Introdução à Análise de Algoritmos.
+  \item[Enunciado:] especifica a implementação de dois algoritmos de
+    ordenação (escolha livre, desde que sustentem a discussão pedida na
+    Questão~5), a execução para vários tamanhos de entrada, o
+    preenchimento de uma planilha compartilhada com os tempos medidos, a
+    coleta de informações de hardware/software do ambiente de execução
+    (conforme \urlPlatformInfo),
+    e a geração de uma chave secreta (mesmo método de
+    \texttt{calcSecret.c}) para identificar os experimentos na planilha.
+    O código-base/esqueleto fornecido está em
+    \urlRepoEP.
+\end{description}
+
+\subsection{Objetivo}
+
+Implementar \textbf{Quicksort} e \textbf{Radix Sort}, medir seus tempos
+de execução reais para tamanhos de entrada de $10^3$ a $2\times10^8$
+(e, nos tamanhos oficiais da planilha, até $2\times10^9$), e discutir os
+resultados com base na complexidade assintótica (temporal e espacial) de
+cada algoritmo, incluindo os casos em que o comportamento observado na
+prática diverge do previsto pela análise assintótica de tempo isolada
+(Seção~\ref{sec:resultados}).
+
+\textbf{Todas as medições deste Relatório foram feitas no computador
+pessoal do autor} (não em ambiente de nuvem ou máquina compartilhada),
+especificado na Seção~\ref{sec:ambiente}, usando \texttt{clock()} e
+\texttt{gettimeofday()}, conforme especificado no enunciado.
+
+\subsection{Organização dos Arquivos}
+
+\begin{lstlisting}
+EP2/
+|-- relatorio.pdf / relatorio.tex   # este Relatorio
+|-- respostas_EP2_completo.docx/.md # versao docx/markdown (equivalente)
+|-- respostas_EP2_resumido.docx/.md # versao resumida
+|-- src/
+|   |-- rng.c/.h, utilarray.c/.h    # fornecidos pelo professor (sem alteracoes)
+|   |-- elapsedRunningTime.c/.h     # fornecido pelo professor (sem alteracoes)
+|   |-- quicksort.c/.h              # implementacao propria
+|   |-- radixsort.c/.h              # implementacao propria
+|   |-- gen_input.c, run_sort.c     # geracao de entrada e execucao medida
+|   |-- benchmark_clock.c           # bateria dos tamanhos oficiais da planilha
+|   `-- secretkey_gen.c             # chave secreta (nao-interativo)
+`-- resultados/
+    |-- raw_results.csv             # medicoes repetidas (clock + wall)
+    |-- tempos_planilha_clock.csv   # tamanhos oficiais da planilha (so clock)
+    |-- resumo_estatistico.csv, regressao.txt
+    `-- graficos_r/                 # graficos PNG + analise.R
+\end{lstlisting}
+
+%======================================================================
+\section{Fundamentação Teórica}
+%======================================================================
+
+\subsection{Quicksort}
+
+\textbf{Classe:} ordenação por comparação, \emph{in-place}, por divisão e
+conquista (\emph{divide-and-conquer}), \textbf{instável}.
+
+\textbf{Ideia central:} escolhe-se um pivô; particiona-se o array em
+elementos menores e maiores que o pivô; ordena-se recursivamente cada
+partição.
+
+\subsubsection*{Implementação (\texttt{quicksort.c})}
+
+\begin{itemize}
+  \item \textbf{Mediana-de-3} (\texttt{A[lo]}, \texttt{A[mid]},
+    \texttt{A[hi]}) como pivô, evitando o pior caso $O(n^2)$ típico de
+    entradas já ordenadas ou quase ordenadas.
+  \item \textbf{Partição de Hoare}, com menos trocas em média que a
+    partição de Lomuto.
+  \item \textbf{Corte para inserção} em sub-arrays de até 16 elementos
+    (\emph{insertion sort cutoff}): para $k$ pequeno, a constante menor
+    do insertion sort compensa seu $O(k^2)$.
+  \item \textbf{Eliminação de recursão de cauda}: recorre explicitamente
+    apenas no lado \emph{menor} da partição, continuando em laço
+    \texttt{while} no lado maior, limitando a pilha a $O(\log n)$ mesmo
+    no pior caso.
+\end{itemize}
+
+\begin{lstlisting}[language=C]
+static void quicksortRec(int *A, long int lo, long int hi) {
+  while (hi - lo + 1 > INSERTION_CUTOFF) {
+    long int mid = lo + (hi - lo) / 2;
+    int pivot = medianOfThree(A, lo, mid, hi);
+    long int p = hoarePartition(A, lo, hi, pivot);
+    if (p - lo < hi - (p + 1)) {
+      quicksortRec(A, lo, p);
+      lo = p + 1;           /* continua no lado maior */
+    } else {
+      quicksortRec(A, p + 1, hi);
+      hi = p;                /* continua no lado maior */
+    }
+  }
+  insertionSort(A, lo, hi);
+}
+\end{lstlisting}
+
+\begin{teorema}[Complexidade média do Quicksort]
+O número esperado de comparações realizadas pelo Quicksort sobre um
+array de $n$ elementos distintos, com pivôs tais que cada elemento tem
+probabilidade $\Omega(1)$ de particionar razoavelmente bem, é
+$\Theta(n \log n)$.
+\end{teorema}
+\begin{proof}[Esboço de demonstração (CLRS, cap.~7)]
+Sejam $z_1 < z_2 < \dots < z_n$ os elementos em ordem. Para $i<j$, seja
+$X_{ij}$ a variável indicadora de que $z_i$ e $z_j$ são comparados em
+algum momento do algoritmo. Dois elementos só são comparados se um deles
+for escolhido como pivô antes de qualquer elemento de valor
+\emph{entre} eles; a probabilidade disso, num conjunto de $j-i+1$
+elementos relevantes, é $\frac{2}{j-i+1}$. O número total esperado de
+comparações é
+\[
+  E\!\left[\sum_{i=1}^{n-1}\sum_{j=i+1}^{n} X_{ij}\right]
+  = \sum_{i=1}^{n-1}\sum_{j=i+1}^{n} \frac{2}{j-i+1} = O(n\log n),
+\]
+por linearidade da esperança e pela soma harmônica $\sum 1/k = O(\log n)$.
+\end{proof}
+
+\textbf{Pior caso:} $\Theta(n^2)$, quando a partição é maximamente
+desbalanceada em toda chamada ($T(n) = T(n-1) + \Theta(n)$). A
+mediana-de-3 torna esse caso raro na prática, mas não o elimina
+adversarialmente. \textbf{Melhor caso:} $\Theta(n \log n)$, partições
+balanceadas, $T(n) = 2T(n/2) + \Theta(n)$ (Teorema Mestre, caso~2).
+
+\textbf{Complexidade espacial:} $O(\log n)$ esperado (pilha de
+recursão, graças à eliminação de recursão de cauda); \textbf{sem}
+alocação de nenhum array auxiliar de tamanho proporcional a $n$ ---
+ordena \emph{in-place}.
+
+\subsection{Radix Sort}
+
+\textbf{Classe:} ordenação \textbf{não comparativa}, estável, por
+distribuição (\emph{counting sort} repetido por dígito).
+
+\textbf{Ideia central:} ordena-se repetidamente por "dígitos" do valor,
+do menos significativo ao mais significativo (variante \textbf{LSD} ---
+\emph{least-significant-digit-first}), usando em cada passada um
+\emph{counting sort} estável.
+
+\subsubsection*{Implementação (\texttt{radixsort.c})}
+
+Base $256$ (dígitos de 8 bits) $\Rightarrow$ \textbf{4 passadas} para
+cobrir os 32 bits de um \texttt{int}. Cada passada conta ocorrências de
+cada um dos 256 valores do dígito corrente, converte em posições via
+soma de prefixos, e distribui os elementos no array auxiliar; os papéis
+de fonte/destino são trocados por ponteiro a cada passada.
+
+\begin{lstlisting}[language=C]
+static void countingPass(int *src, int *dst, long int n, int shift) {
+  long int count[RADIX_BASE + 1];
+  memset(count, 0, sizeof(count));
+  for (long int i = 0; i < n; i++) {
+    unsigned int digit = ((unsigned int)src[i] >> shift) & RADIX_MASK;
+    count[digit + 1]++;
+  }
+  for (int d = 0; d < RADIX_BASE; d++) count[d + 1] += count[d];
+  for (long int i = 0; i < n; i++) {
+    unsigned int digit = ((unsigned int)src[i] >> shift) & RADIX_MASK;
+    dst[count[digit]++] = src[i];
+  }
+}
+\end{lstlisting}
+
+\textbf{Complexidade temporal:} $O(d \cdot (n+b))$, com $d$ = número de
+passadas, $b$ = base. Aqui $d=4$ e $b=256$ são \textbf{constantes
+fixas} (decorrem só do tamanho fixo de 32 bits do \texttt{int}),
+reduzindo a complexidade a $\Theta(n)$.
+
+\begin{teorema}[Radix sort não viola $\Omega(n\log n)$]
+O limite inferior $\Omega(n\log n)$ para ordenação vale apenas para
+algoritmos que só podem comparar pares de chaves (prova pela árvore de
+decisão: distinguir $n!$ permutações exige profundidade mínima
+$\log_2(n!) = \Theta(n\log n)$). O radix sort nunca compara duas chaves
+entre si --- usa o valor absoluto de cada dígito para indexar
+diretamente posições no array, uma operação mais poderosa que
+comparação binária, e por isso escapa legitimamente desse limite.
+\end{teorema}
+
+\textbf{Complexidade espacial: $O(n+b)$.} Diferente do quicksort, o
+radix sort \textbf{não é in-place}: cada passada escreve num array
+auxiliar de tamanho $n$. Em pico, mantém \textbf{dois arrays de tamanho
+$n$} simultaneamente na memória --- o dobro do espaço de dados que o
+quicksort usa. Essa característica se manifesta empiricamente na
+Seção~\ref{sec:t2e9} como desvantagem prática para $n$ muito grande.
+
+\subsection{Comparação teórica resumida}
+
+\begin{table}[H]
+\centering
+\caption{Quicksort vs.\ Radix Sort --- comparação teórica.}
+\begin{tabular}{l l l}
+\toprule
+\rowcolor{tablehead}
+ & Quicksort (implementado) & Radix Sort (implementado)\\
+\midrule
+Classe & Comparação, \emph{in-place} & Distribuição, não-comparativo\\
+Tempo médio & $\Theta(n\log n)$ & $\Theta(n)$ ($d,b$ fixos)\\
+Pior caso & $\Theta(n^2)$ (raro, mitigado) & $\Theta(n)$ sempre\\
+Espaço auxiliar & $O(\log n)$ (pilha) & $O(n+b)$ (array duplicado)\\
+Estável & Não & Sim\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%======================================================================
+\section{Metodologia e Implementação Computacional}
+%======================================================================
+
+\subsection{Ambiente de Execução}
+\label{sec:ambiente}
+
+\begin{table}[H]
+\centering
+\caption{Ambiente de hardware/software usado em todas as medições deste Relatório (computador pessoal do autor).}
+{\small
+\begin{tabular}{L{4.0cm} L{10.5cm}}
+\toprule
+\rowcolor{tablehead}
+Item & Valor\\
+\midrule
+CPU & 13th Gen Intel(R) Core(TM) i7-1355U (1,70 GHz, 10 núcleos, 12 threads)\\
+RAM total & 16.777.216 kB (16,0 GB)\\
+RAM disponível (na coleta) & 16.454.352 kB\\
+Memória virtual (commit) & 34.280.144 kB total, 28.839.404 kB em uso\\
+Sistema operacional & Windows 11 Home Single Language, 25H2 (build 26200.9711, 64 bits)\\
+Compilador & gcc (MinGW-W64 x86\_64-ucrt-posix-seh, build Brecht Sanders, r8) 13.2.0\\
+Flags de compilação & \texttt{-O2}\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\subsection{Compilação}
+
+\begin{lstlisting}
+gcc -O2 rng.c utilarray.c gen_input.c -o gen_input.exe
+gcc -O2 rng.c utilarray.c elapsedRunningTime.c quicksort.c radixsort.c run_sort.c -o run_sort.exe
+gcc -O2 rng.c utilarray.c quicksort.c radixsort.c benchmark_clock.c -o benchmark_clock.exe
+gcc -O2 rng.c secretkey_gen.c -o secretkey_gen.exe
+\end{lstlisting}
+
+\subsection{Medição do Tempo de Execução}
+\label{sec:medicao}
+
+O tempo é medido com \texttt{clock()} (tempo de CPU) e
+\texttt{gettimeofday()} (relógio de parede), via
+\texttt{elapsedRunningTime.c} fornecido pelo professor, em torno
+\emph{apenas} da chamada ao algoritmo de ordenação (\texttt{start()} /
+\texttt{stop()}), excluindo geração e leitura da entrada.
+
+\textbf{Observação metodológica importante:} no Windows/MinGW usado,
+\texttt{CLOCKS\_PER\_SEC = 1000}, ou seja, \texttt{clock()} tem
+resolução de apenas $\sim$1\,ms --- grosseira demais para medir
+corretamente execuções de microssegundos a poucos milissegundos (visível
+nos dados brutos: \texttt{tempo\_clock\_s} aparece quantizado em
+múltiplos de 0,001, enquanto \texttt{tempo\_wall\_s} tem resolução de
+microssegundos). No Linux, \texttt{CLOCKS\_PER\_SEC} é tipicamente
+1.000.000. Por isso, \textbf{o tempo de relógio de parede
+(\texttt{gettimeofday()}) é usado como medida principal} nas análises
+estatísticas deste Relatório (Seção~\ref{sec:resultados}); somente a
+tabela da planilha oficial (Seção~\ref{sec:planilha-oficial}), que o
+enunciado pede especificamente com \texttt{clock()}, usa esse relógio.
+
+\subsection{Controle de Confusão Experimental}
+
+Para cada tamanho $n$ e repetição, gera-se \textbf{um único array
+aleatório} (\texttt{gen\_input}, semente $= n\cdot1000003 +
+\mathit{repeticao}\cdot7919 + 12345$) e o \textbf{mesmo} array binário é
+usado para testar os dois algoritmos, eliminando a variação de entrada
+como fator de confusão e permitindo comparação pareada
+(Seção~\ref{sec:estatistica}).
+
+\subsection{Tamanhos e Repetições}
+
+Tamanhos pequenos ($n\le10^4$) foram repetidos 7$\times$; médios
+($10^5$--$10^6$) 3 a 5$\times$; grandes ($\ge5\times10^6$) 1 a
+3$\times$, reduzindo repetições conforme o tempo por execução cresce.
+Nenhuma execução atingiu o limite de 3600\,s estipulado pelo enunciado.
+Os 14 tamanhos oficiais da planilha ($T(10^6)$ a $T(10^{10})$) foram
+medidos à parte, numa única execução cada, por \texttt{benchmark\_clock.c}.
+
+%======================================================================
+\section{Resultados Experimentais e Discussão Científica}
+\label{sec:resultados}
+%======================================================================
+
+\subsection{Tempo médio de execução}
+
+\begin{table}[H]
+\centering
+\caption{Tempo médio de execução (relógio de parede), por tamanho de entrada. Fonte: \texttt{resultados\barra{}raw\_results.csv}, agregado por \texttt{resultados\barra{}graficos\_r\barra{}analise.R}.}
+\label{tab:resultados}
+\begin{tabular}{r r r r}
+\toprule
+\rowcolor{tablehead}
+$n$ & Quicksort (s) & Radix Sort (s) & razão (qs/radix)\\
+\midrule
+1.000       & 0,0000377  & 0,0000057  & 6,6$\times$\\
+10.000      & 0,000410   & 0,0000801  & 5,1$\times$\\
+100.000     & 0,005271   & 0,000667   & 7,9$\times$\\
+500.000     & 0,025271   & 0,003708   & 6,8$\times$\\
+1.000.000   & 0,055610   & 0,008487   & 6,6$\times$\\
+5.000.000   & 0,298064   & 0,037674   & 7,9$\times$\\
+10.000.000  & 0,614553   & 0,078156   & 7,9$\times$\\
+50.000.000  & 3,355480   & 0,377036   & 8,9$\times$\\
+100.000.000 & 7,713330   & 0,951264   & 8,1$\times$\\
+200.000.000 & 14,147100 (1 execução) & 1,563120 (1 execução) & 9,1$\times$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A dispersão entre repetições (quanto cada tempo individual variou em
+torno dessa média) não é mostrada célula a célula para manter a tabela
+simples de ler; está disponível na Tabela~\ref{tab:desviopadrao}
+(abaixo) para quem quiser o detalhe, e visualmente na
+Figura~\ref{fig:boxplot}.
+
+\begin{table}[H]
+\centering
+\caption{Desvio-padrão (dispersão entre repetições) correspondente à Tabela~\ref{tab:resultados}. Tamanhos com apenas 1 execução não têm desvio-padrão definido.}
+\label{tab:desviopadrao}
+\begin{tabular}{r r r}
+\toprule
+\rowcolor{tablehead}
+$n$ & Quicksort (s) & Radix Sort (s)\\
+\midrule
+1.000       & 0,0000150 & 0,0000017\\
+10.000      & 0,0000499 & 0,0000455\\
+100.000     & 0,000451  & 0,000195\\
+500.000     & 0,000871  & 0,000432\\
+1.000.000   & 0,004236  & 0,001196\\
+5.000.000   & 0,004433  & 0,001803\\
+10.000.000  & 0,012138  & 0,002646\\
+50.000.000  & 0,002232  & 0,019041\\
+100.000.000 & 0,101421  & 0,078973\\
+200.000.000 & --- (1 execução) & --- (1 execução)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\figuraopcional{resultados/graficos_r/01_tempo_vs_n_loglog.png}{Tempo médio de execução vs.\ $n$, escala log-log, com barras de $\pm 1$ desvio-padrão.}{fig:tempon}{Fonte: \texttt{resultados\barra{}graficos\_r\barra{}analise.R}, dados em \texttt{resultados\barra{}raw\_results.csv}.}
+
+\figuraopcional{resultados/graficos_r/02_razao_qs_radix.png}{Razão tempo(quicksort)/tempo(radix sort) por tamanho de entrada.}{fig:razao}{Fonte: \texttt{resultados\barra{}graficos\_r\barra{}analise.R}.}
+
+\figuraopcional{resultados/graficos_r/03_boxplot_variabilidade.png}{Variabilidade entre repetições (tamanhos com $\ge$3 execuções).}{fig:boxplot}{Fonte: \texttt{resultados\barra{}graficos\_r\barra{}analise.R}.}
+
+\subsection{Análise Estatística}
+\label{sec:estatistica}
+
+\textbf{Regressão log-log} ($\log(\mathit{tempo}) = \log(a) + k\log(n)$),
+ajustada sobre as médias por tamanho, estima o expoente de crescimento
+empírico:
+
+\begin{table}[H]
+\centering
+\caption{Regressão log-log do tempo de execução (relógio de parede) em função de $n$.}
+\begin{tabular}{l r r r}
+\toprule
+\rowcolor{tablehead}
+Algoritmo & $k$ estimado & IC 95\% & $R^2$ ajustado\\
+\midrule
+Quicksort   & 1,0555 & [1,0459 ; 1,0651] & 0,9999\\
+Radix Sort  & 1,0227 & [1,0018 ; 1,0436] & 0,9993\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Ambos os ajustes são excelentes ($R^2 > 0{,}999$). O expoente do
+\textbf{quicksort (1,0555) é visivelmente maior} que o do \textbf{radix
+sort (1,0227)}, refletindo o fator $\log n$ extra de
+$\Theta(n\log n)$ presente no quicksort e ausente no radix sort. O
+intervalo de confiança do radix sort \textbf{contém 1,0}, consistente
+com $\Theta(n)$ teórico; o do quicksort \textbf{não contém 1,0},
+evidência de crescimento genuinamente superlinear.
+
+\textbf{Teste pareado} (Wilcoxon signed-rank, repetições com a mesma
+entrada para os dois algoritmos como pares naturais, $n=68$ pares,
+tamanhos de $10^3$ a $10^8$): $V=2346$, $p\approx7{,}8\times10^{-13}$. O
+quicksort foi mais lento que o radix sort em \textbf{100\% dos 68 pares}
+comparados --- diferença estatisticamente altamente significativa e
+sistemática, não um artefato de média.
+
+\subsection{Tamanhos extremos (planilha oficial, até 2 bilhões)}
+\label{sec:planilha-oficial}
+\label{sec:t2e9}
+
+\begin{table}[H]
+\centering
+\caption{Tempos medidos com \texttt{clock()}, execução única, nos 14 tamanhos oficiais da planilha do professor. Fonte: \texttt{resultados\barra{}tempos\_planilha\_clock.csv}.}
+\begin{tabular}{r r r}
+\toprule
+\rowcolor{tablehead}
+Tamanho & Quicksort (s) & Radix Sort (s)\\
+\midrule
+$T(10^6)$  & 0,057   & 0,007\\
+$T(2\times10^6)$  & 0,111   & 0,015\\
+$T(5\times10^6)$  & 0,334   & 0,038\\
+$T(10^7)$  & 0,618   & 0,079\\
+$T(2\times10^7)$  & 1,286   & 0,156\\
+$T(5\times10^7)$  & 3,415   & 0,414\\
+$T(10^8)$  & 7,141   & 0,849\\
+$T(2\times10^8)$  & 16,154  & 1,518\\
+$T(5\times10^8)$  & 38,099  & 4,012\\
+$T(10^9)$  & 81,306  & 12,322\\
+$\mathbf{T(2\times10^9)}$  & \textbf{222,180} & \textbf{503,456}\\
+$T(6\times10^9)$  & não testado & não testado\\
+$T(8\times10^9)$  & não testado & não testado\\
+$T(10^{10})$ & não testado & não testado\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\figuraopcional{resultados/graficos_r/04_planilha_oficial_loglog.png}{Tamanhos oficiais da planilha, até 2 bilhões de elementos.}{fig:planilha}{Fonte: \texttt{resultados\barra{}graficos\_r\barra{}analise.R}, dados em \texttt{resultados\barra{}tempos\_planilha\_clock.csv}.}
+
+\textbf{O resultado em $T(2\times10^9)$ inverte a tendência}: pela
+primeira vez o radix sort (503,5\,s) é \textbf{mais lento} que o
+quicksort (222,2\,s). Não é erro de medição --- é consequência direta
+da arquitetura de memória:
+
+\begin{itemize}
+  \item Em $n=2\times10^9$, um array de \texttt{int} (4 bytes) ocupa
+    \textbf{8\,GB}.
+  \item O \textbf{quicksort é in-place}: usa só esses 8\,GB.
+  \item O \textbf{radix sort aloca um array auxiliar do mesmo tamanho}
+    (Seção~2.2): em pico, precisa de $\sim$\textbf{16\,GB} ---
+    praticamente toda a RAM física da máquina (16,0\,GB,
+    Seção~\ref{sec:ambiente}).
+  \item Isso força paginação em disco, ordens de grandeza mais lenta
+    que acesso à RAM. O próprio ambiente registrado
+    (Seção~\ref{sec:ambiente}) mostra \textbf{28,8\,GB de memória
+    virtual em uso} num sistema com apenas 16\,GB de RAM física ---
+    evidência direta de pressão de memória nesse momento.
+  \item \textbf{Ressalva metodológica:} este ponto é uma única execução,
+    sem repetição (diferente da Seção~\ref{sec:resultados}, que tem
+    múltiplas repetições e desvio-padrão). A inversão é consistente com
+    o raciocínio teórico acima e com a leitura de memória virtual
+    registrada, mas não se pode descartar 100\% um efeito de ruído do
+    sistema sem repetir a medição --- não feita para evitar o alto
+    custo de tempo (cada execução de $T(2\times10^9)$ já leva vários
+    minutos).
+\end{itemize}
+
+Este é um exemplo concreto de por que a \textbf{complexidade espacial
+importa na prática, não só na teoria}: o radix sort tem melhor
+complexidade de tempo assintótico ($\Theta(n)$ vs.\ $\Theta(n\log n)$),
+mas sua maior exigência de memória ($O(n+b)$ com constante efetiva~2,
+pelo array duplicado) o torna mais lento assim que o tamanho do
+problema se aproxima do limite de RAM física disponível.
+
+\subsection{Mesma planilha, medida com \texttt{gettimeofday()}}
+\label{sec:gettimeofday}
+
+A tabela da Seção~\ref{sec:planilha-oficial} usa \texttt{clock()},
+que mede \textbf{tempo de CPU} (apenas os ciclos em que o processo
+esteve de fato executando instruções). Os mesmos 14 tamanhos oficiais
+foram remedidos com \texttt{gettimeofday()}, que mede \textbf{tempo de
+relógio de parede} (\emph{wall-clock}): o intervalo real decorrido,
+incluindo tempo em que o processo ficou bloqueado --- por exemplo,
+aguardando o sistema operacional satisfazer uma falha de página durante
+paginação em disco. Execução única por tamanho, como na medição
+anterior.
+
+\begin{table}[H]
+\centering
+\caption{Tempos medidos com \texttt{gettimeofday()} (tempo de relógio de
+parede), execução única, nos mesmos 14 tamanhos oficiais da planilha do
+professor. Fonte: \texttt{tempos\barra{}planilha\barra{}gettimeofday.csv}.}
+\label{tab:gettimeofday}
+\begin{tabular}{r r r}
+\toprule
+\rowcolor{tablehead}
+Tamanho & Quicksort (s) & Radix Sort (s)\\
+\midrule
+$T(10^6)$  & 0,060103  & 0,009102\\
+$T(2\times10^6)$  & 0,140042  & 0,016028\\
+$T(5\times10^6)$  & 0,306008  & 0,045090\\
+$T(10^7)$  & 0,672141  & 0,085645\\
+$T(2\times10^7)$  & 1,330477  & 0,227832\\
+$T(5\times10^7)$  & 4,320474  & 0,656880\\
+$T(10^8)$  & 8,720561  & 1,087448\\
+$T(2\times10^8)$  & 15,489256 & 1,646543\\
+$T(5\times10^8)$  & 37,005234 & 9,020103\\
+$T(10^9)$  & 110,744745 & 16,734537\\
+$\mathbf{T(2\times10^9)}$  & \textbf{243,714830} & \textbf{632,344466}\\
+$T(6\times10^9)$  & não testado & não testado\\
+$T(8\times10^9)$  & não testado & não testado\\
+$T(10^{10})$ & não testado & não testado\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{A inversão em $T(2\times10^9)$ se mantém --- e é ainda mais
+acentuada}: sob relógio de parede, o radix sort (632,3\,s) é
+\textbf{2,85$\times$ mais lento} que o quicksort (243,7\,s), contra
+\textbf{2,27$\times$} na medição de tempo de CPU (503,5\,s vs.\
+222,2\,s). Isso \textbf{reforça}, em vez de contradizer, a explicação
+por pressão de memória da Seção anterior: o tempo gasto em troca de
+páginas com o disco conta como tempo de relógio de parede decorrido,
+mas conta pouco ou nada como tempo de CPU (o processo fica
+\emph{bloqueado}, não executando instruções, enquanto o SO resolve a
+falta de página) --- logo, é esperado que \texttt{gettimeofday()}
+exponha esse custo de forma mais completa que \texttt{clock()}
+justamente no ponto em que a paginação em disco é mais severa.
+
+De forma mais geral, em todos os 11 tamanhos testados o tempo de
+relógio de parede é igual ou maior que o tempo de CPU correspondente
+(como deveria ser, já que nenhum processo pode gastar mais CPU do que
+tempo decorrido), exceto por três pontos do quicksort
+($T(5\times10^6)$, $T(2\times10^8)$ e $T(5\times10^8)$) em que o
+\texttt{gettimeofday()} registrou um valor até 8\% \textbf{menor} que o
+\texttt{clock()} --- fisicamente só possível como ruído de medição,
+consistente com a mesma ressalva já feita na seção anterior: ambas as
+medições são de execução única, sem repetição, e portanto sujeitas a
+variação do sistema (outros processos, \emph{scheduling} do SO) que não
+pode ser separada de um efeito real sem repetir a medição. O caso mais
+chamativo é o radix sort em $T(5\times10^8)$: 4,012\,s por \texttt{clock()}
+contra 9,020\,s por \texttt{gettimeofday()} (mais que o dobro) --- nesse
+ponto o array auxiliar do radix sort já ocupa $\sim$4\,GB (2\,GB de
+entrada + 2\,GB de cópia), o que começa a pressionar a memória bem
+antes do colapso completo em $T(2\times10^9)$, mesmo sem ainda inverter
+a ordem dos dois algoritmos.
+
+\subsection{Tamanhos não testados ($T(6\times10^9)$, $T(8\times10^9)$, $T(10^{10})$)}
+
+Não testados por \textbf{dois limites independentes e cumulativos}:
+
+\begin{enumerate}
+  \item \textbf{RAM física}: 6, 8 e 10 bilhões de \texttt{int}s exigiriam
+    $\sim$24, 32 e 40\,GB, respectivamente --- mais que os 16\,GB
+    disponíveis, mesmo antes do array auxiliar do radix sort.
+  \item \textbf{Modelo de dados do Windows (LLP64)}: o campo
+    \texttt{long int length} do \texttt{struct Array} (fornecido pelo
+    professor) tem \textbf{64 bits no Linux} (modelo LP64, usado nos
+    exemplos originais do professor), mas apenas \textbf{32 bits no
+    Windows} (modelo LLP64, adotado pelo MinGW-w64 por seguir a ABI do
+    Windows) --- mesmo em compilação de 64 bits. Isso limita o tamanho
+    máximo representável a $2^{31}-1 \approx 2{,}147$ bilhões,
+    independentemente da RAM disponível. É uma diferença de
+    portabilidade real entre Linux e Windows, documentada aqui, não uma
+    limitação do algoritmo.
+\end{enumerate}
+
+Essas células foram marcadas "Sem memória" por uma verificação prévia
+no código (\texttt{benchmark\_clock.c}), que evita a tentativa de
+alocação, já que seria inútil (RAM) e, para $n > 2^{31}-1$, produziria
+comportamento indefinido pelo \emph{overflow} do campo \texttt{length}.
+
+\subsection{Conclusão}
+
+Os dados confirmam a teoria (Seção~2) em praticamente toda a faixa
+testada: o radix sort é consistentemente de 5 a 9$\times$ mais rápido
+que o quicksort, com vantagem relativa que \textbf{cresce} com $n$ (de
+$\sim$6,6$\times$ em $n=10^3$ a $\sim$9,1$\times$ em $n=2\times10^8$)
+--- compatível com o fator $\log n$ extra do quicksort, que pesa cada
+vez mais conforme $n$ cresce. A regressão log-log confirma
+estatisticamente a diferença de expoentes e o teste pareado confirma
+que a vantagem do radix sort é sistemática ($p<10^{-12}$). Porém, em
+$n=2\times10^9$, essa vantagem se inverte na prática por causa do maior
+custo de memória do radix sort colidir com o limite físico de RAM da
+máquina --- um lembrete de que complexidade assintótica de tempo e
+desempenho real divergem quando a complexidade \textbf{espacial} de um
+algoritmo o aproxima dos limites físicos do hardware disponível.
+
+%======================================================================
+\section{Questões do Questionário do EP2}
+%======================================================================
+
+\subsection{Questão 1 --- Chave secreta}
+
+Método idêntico ao de \texttt{calcSecret.c}: inicializa o gerador
+congruente linear (constantes de \texttt{java.util.Random}:
+multiplicador \texttt{0x5DEECE66D}, incremento \texttt{0xB}, módulo
+$2^{48}$) com \texttt{setSeed(semente)} e aplica \texttt{next(31)}
+repetidamente; o último valor retornado é a chave.
+
+\begin{itemize}
+  \item Semente: RA do autor = \texttt{18245598}
+  \item Iterações: \texttt{31}
+  \item \textbf{Chave secreta: \texttt{1906028835}}
+\end{itemize}
+
+Valor puramente aritmético (independe de hardware/SO/compilador),
+reconfirmado executando \texttt{secretkey\_gen.exe 18245598 31} no
+mesmo ambiente Windows usado para os benchmarks.
+
+\subsection{Questão 2 --- Crítica ao método de geração da chave}
+
+O gerador (LCG --- \emph{Linear Congruential Generator}) é o mesmo de
+\texttt{java.util.Random}: $\mathit{seed} = (\mathit{seed}\cdot
+\texttt{0x5DEECE66D} + \texttt{0xB}) \bmod 2^{48}$,
+$\mathit{next}(\mathit{bits}) = \mathit{seed} \gg (48-\mathit{bits})$.
+
+\textbf{Pontos fortes para este uso:} determinístico e reprodutível
+(mesma semente $\Rightarrow$ mesma chave, sem precisar armazenar
+tabela); rápido; para fins de \emph{identificação} (não de segurança), a
+qualidade estatística do LCG é irrelevante.
+
+\textbf{Fraquezas (crítica técnica, mesmo não comprometendo este uso):}
+
+\begin{itemize}
+  \item LCGs têm \textbf{estrutura em reticulado} (Marsaglia, 1968,
+    "Random numbers fall mainly in the planes"): $k$-uplas consecutivas
+    caem num número reduzido de hiperplanos paralelos, nunca
+    preenchendo o espaço uniformemente.
+  \item Os \textbf{bits baixos de um LCG têm período curto} --- por isso
+    \texttt{next(bits)} usa só os bits altos do estado. O uso de
+    \texttt{next(31)} (31 bits mais significativos) é a escolha correta
+    sob esse aspecto.
+  \item Dado o módulo $2^{48}$ e 31 iterações fixas, há mais valores de
+    saída possíveis (até $\sim2\times10^9$) do que RAs plausíveis,
+    tornando colisões entre dois RAs diferentes improváveis mas não
+    impossíveis (paradoxo do aniversário) em turmas de dezenas a poucas
+    centenas de alunos.
+  \item Um LCG \textbf{não é adequado para chaves criptográficas}
+    (previsível a partir de poucas saídas consecutivas) --- irrelevante
+    aqui, que é uso de identificação pública, não de sigilo.
+\end{itemize}
+
+\subsection{Questão 3 --- Código-fonte}
+
+Entregue em \texttt{src/}: \texttt{rng.c\barra{}h},
+\texttt{utilarray.c\barra{}h}, \texttt{elapsedRunningTime.c\barra{}h}
+(fornecidos pelo professor, sem alterações); \texttt{quicksort.c\barra{}h},
+\texttt{radixsort.c\barra{}h} (implementação própria, Seção~2);
+\texttt{gen\_input.c}, \texttt{run\_sort.c}, \texttt{benchmark\_clock.c},
+\texttt{secretkey\_gen.c} (programas de suporte, próprios). Compilação
+na Seção~3.2.
+
+\subsection{Questão 4 --- Preenchimento da planilha}
+
+Os dados necessários para o preenchimento --- identificador
+(\texttt{1906028835}), informações de ambiente (Seção~\ref{sec:ambiente})
+e os 14 tempos oficiais por algoritmo (Tabela em
+Seção~\ref{sec:planilha-oficial}, disponíveis também em
+\texttt{resultados\barra{}tempos\_planilha\_clock.csv}) --- estão prontos
+e documentados neste Relatório.
+
+\subsection{Questão 5 --- Discussão científica}
+
+Ver Seção~\ref{sec:resultados} (Resultados Experimentais e Discussão
+Científica), que cobre metodologia, resultados tabulados, análise
+estatística (regressão log-log e teste pareado de Wilcoxon), o achado do
+ponto de inversão em $T(2\times10^9)$ e sua explicação em termos de
+complexidade espacial, e os limites de representação em
+\texttt{long int} no Windows.
+
+%======================================================================
+\section{Fontes e Referências}
+%======================================================================
+
+\begin{itemize}
+  \item F.~Nakano. \emph{Enunciado e código-base do EP2, IAA}.
+    \urlRepoEP.
+  \item F.~Nakano. \emph{getPlatformInfo}.
+    \urlPlatformInfo.
+  \item T.~H.~Cormen, C.~E.~Leiserson, R.~L.~Rivest, C.~Stein.
+    \emph{Introduction to Algorithms}, 3ª ed.\ --- análise do quicksort
+    por variáveis indicadoras (cap.~7) e do radix sort (cap.~8).
+  \item G.~Marsaglia. ``Random numbers fall mainly in the planes''.
+    \emph{Proceedings of the National Academy of Sciences}, 61(1), 1968
+    --- estrutura em reticulado de LCGs.
+  \item Oracle. Documentação de \texttt{java.util.Random} --- constantes
+    do gerador congruente linear usado em \texttt{rng.c}.
+  \item R Core Team. \emph{R: A Language and Environment for Statistical
+    Computing}, versão 4.3.3 --- usado em
+    \texttt{resultados\barra{}graficos\_r\barra{}analise.R} para a
+    regressão log-log, teste de Wilcoxon e os gráficos deste Relatório.
+\end{itemize}
+
+\end{document}
